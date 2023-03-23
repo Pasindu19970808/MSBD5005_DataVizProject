@@ -31,9 +31,9 @@ LOCATION_PARSING_REGEX = {
 
 participantIDColName = 'participantId'
 
-MAIN_ACTIVITY_PATH = r"D:\Datasets\Projects\VAST Challenge\VAST-Challenge-2022\Datasets\Activity Logs"
+MAIN_ACTIVITY_PATH = r"D:\GitHub\MSBD5005_DataVizProject\Datasets\Activity Logs"
 FILE_SUFFIX = r"ParticipantStatusLogs"
-SAVING_PATH = r"D:\Datasets\Projects\VAST Challenge\VAST-Challenge-2022\Datasets\ReducedData"
+SAVING_PATH = r"D:\GitHub\MSBD5005_DataVizProject\Datasets\ReducedData"
 FILE_SUFFIX_PARTICIPANT = r"Activity"
 def processDateTime(df,alias):
     """
@@ -67,19 +67,21 @@ def collectParticipantDataframe(df,alias,id,dict_collection):
         dict_collection[len(dict_collection)] = df_participant
     return dict_collection
 
-def readActivityLogs(id):
+def readActivityLogs():
     """
     Creates a dictionary of data relevant to each participant from the activity logs
     :params id:id of participant
     """
-    dict_collection = {}
+    tmp = []
     for i in range(1,73):
-        #print(f"------------Reading {FILE_SUFFIX}{i}------------")
-        filepath = Path(Path(MAIN_ACTIVITY_PATH,f"{FILE_SUFFIX}{i}.csv")).resolve()
+        print(f"------------Reading {FILE_SUFFIX}{i}------------")
+        filepath = f'{MAIN_ACTIVITY_PATH}/{FILE_SUFFIX}{i}.csv'
         df = pd.read_csv(filepath)
-        dict_collection = collectParticipantDataframe(df,'pId',id,dict_collection)
-        #print(f"--------Done Reading {FILE_SUFFIX}{i}------------")
-    return dict_collection
+        tmp.append(df)
+        # print(f"--------Done Reading {FILE_SUFFIX}{i}------------")
+    full_activity_log = pd.concat(tmp, axis = 0,ignore_index=True)
+    # return dict_collection
+    return full_activity_log
 
 def getDuplicatedIdx(df_participantArray):
     """
@@ -92,12 +94,11 @@ def getDuplicatedIdx(df_participantArray):
     non_duplicated_idx = np.concatenate(([True],non_duplicated_idx))
     return non_duplicated_idx
 
-def removeAdjacentDuplicates(participant_dict):
+def removeAdjacentDuplicates(df_participant):
     """
     Function to remove adjascent duplicate rows
     :params participant_dict:dictionary of data relevant to a participant from all activity logs
     """
-    df_participant = pd.concat(participant_dict,ignore_index=True)
     df_participant = processDateTime(df_participant,'time')
     df_participant = processLocation(df_participant,'location',['x','y'])
 
@@ -122,10 +123,11 @@ def removeAdjacentDuplicates(participant_dict):
 
 def processDataofParticipants(id_path):
     ids = list(pd.read_csv(id_path)[participantIDColName].astype(int))
+    full_data = readActivityLogs()
     for id in ids:
         print(f"-------Doing Participant {id}------")
-        dict_collection = readActivityLogs(id)
-        df_participant = removeAdjacentDuplicates(dict_collection)
+        id_data = full_data.loc[full_data.participantId == id].copy(deep=True)
+        df_participant = removeAdjacentDuplicates(id_data)
         save_path = Path(Path(SAVING_PATH,f"{FILE_SUFFIX_PARTICIPANT}_{id}.csv")).resolve()
         df_participant.to_csv(save_path,index = False)
         print(f"-------Done Participant {id}------")
