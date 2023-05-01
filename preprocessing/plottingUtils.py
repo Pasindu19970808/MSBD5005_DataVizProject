@@ -113,7 +113,7 @@ def collectParticipantTimeStampPoints(df,complete_df,id,alias,id_alias):
         group_by_alias = id_alias
         gdf = geoDFProcessing(temp_df,group_by_alias)
         yield (i,gdf)
-            
+
 
 def collectParticipantTimeStampBoundaries(df,id_alias,id,complete_df):
     #Assuming that a user takes only 1 route from home to work and work to home,
@@ -162,7 +162,7 @@ def addHappinessScore(df):
     happiness_df = pd.read_csv(Path(DATA_PATH,SUBDIR_APARTMENTS,PARTICIPANTS_CSV).resolve())[HAPPINESS_COLS]
     happiness_df = df.merge(happiness_df,how = 'left',left_on = 'participantId',right_on = 'participantId')
     return happiness_df
-    
+
 
 def addApartmentCoordinates(df):
     apartment_df = pd.read_csv(Path(DATA_PATH,SUBDIR_APARTMENTS,APARTMENTS_CSV).resolve())[APARTMENT_LOCATION_COLS]
@@ -213,7 +213,4 @@ def processBuildingData(alias):
     gdf = makeGeoDF(df)
     topojson = makeTOPOJSON(gdf)
     alt_data = turnToAltairFormat(topojson)
-    return alt_data
-
-
-
+    return
