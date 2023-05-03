@@ -7,9 +7,11 @@ dataArray = [{filename:'Perplexity_10.csv',svgnum:1},
 {filename:'Perplexity_70.csv',svgnum:7},
 {filename:'Perplexity_80.csv',svgnum:8},
 {filename:'Perplexity_90.csv',svgnum:9}]
-parallelCoords = [{filename:'parallelCoords.csv'}]
-const dimensions = ['NumActivities','Eating','Recreating','WorkPlace','TravelMinutes','Home','Leave Home','Come Back','joviality']
+parallelCoords = [{filename:'parallelCoordsExpense.csv',svgnum:1}]
+const dimensions = ['joviality','NumActivities','TravelMinutes','Recreating','Eating','Home','WorkPlace','Leave Home','Come Back',
+                    'Average Expenses','Average Income']
 
+// ['NumActivities','Eating','Recreating','WorkPlace','TravelMinutes','Home','Leave Home','Come Back','joviality']
 
 
 //https://stackoverflow.com/questions/29573481/d3-js-scatterplot-with-different-colors-and-symbols-issues-encountered (Color Scale)
@@ -140,11 +142,11 @@ let getXval = (func,d) =>{
 //then to obtain values that are read externally
 //use another async function to be called inside this async function
 //use await to wait until you get the result from the other async function
-async function plotParallelCoords(data){
+async function plotParallelCoords(data,svgnum){
     const mappeddata= data.map(d => dimensions.map(dimension => d[dimension]))
     // console.log(mappeddata)
     let yScales = []
-    svgparallel = d3.select('#parallelCoords')
+    svgparallel = d3.select(`#parallelCoords${svgnum}`)
     .attr('width',1750)
     .attr('height',1250)
     width = 1500
@@ -169,7 +171,7 @@ async function plotParallelCoords(data){
     // }
     dimensions.forEach((d,i) => yScales.push(d3.scaleLinear()
     .domain([+res[d].Min,+res[d].Max])
-    .range([height - margin.bottom,margin.top])))
+    .range([height - margin.bottom,margin.top + 10])))
 
 
     svgparallel.append('g')
@@ -177,6 +179,9 @@ async function plotParallelCoords(data){
     .attr('transform',`translate(0,${margin.top - 15})`)
     .selectAll('path')
     .attr('stroke','none')
+
+    
+    
 
     dimensions.forEach((d,i) => svgparallel.append('g')
     .call(d3.axisLeft(yScales[i]))
@@ -193,8 +198,15 @@ async function plotParallelCoords(data){
 
 
     // xScaleParallel(dimensions[i]
+    //d3 takes a single array, 
+    //then put it in a nested array as [[1,2,3]]
+    //then pass in [[1,2,3]]
+    //in the line generator, it sends in each single value
+    //at one time to get values. 
+    //Remember that a single [1,2,3] corresponds to one line
 
     data.forEach((d2,i2) =>{
+        console.log(d2)
         cluster = d2.Cluster
         data = dimensions.map(d => d2[d])
         svgparallel.append('g')
@@ -216,9 +228,12 @@ async function plotParallelCoords(data){
                     return 'orange'
                 }
             })
+            .attr('opacity','0.25')
         
         
     })
+
+    d3.selectAll(`#parallelCoords${svgnum} .tick`).attr('font-size','1rem')
     
     
 }
@@ -234,7 +249,7 @@ let processPromise = (result,val) => {
 
 }
 
-let processParallelPromise = (result) => {  
+let processParallelPromise = (result,svgnum) => {  
     participantData = []
     for (participant of result){
         participantData.push({'pID':participant['pID'],
@@ -247,9 +262,11 @@ let processParallelPromise = (result) => {
         'Home':participant['Home'],
         'Leave Home':participant['Leave Home'],
         'Come Back':participant['Come Back'],
-        'joviality':participant['joviality']})
+        'joviality':participant['joviality'],
+        'Average Expenses':participant['Average Expenses'],
+        'Average Income':participant['Average Income']})
     }
-    plotParallelCoords(participantData)
+    plotParallelCoords(participantData,svgnum)
 }
 
 
@@ -336,7 +353,7 @@ const promise9 = d3.csv(dataArray[8].filename,
     })
 
 
-const parallelCoordPromise = d3.csv(parallelCoords[0].filename,
+const parallelCoordPromise1 = d3.csv(parallelCoords[0].filename,
     function(d){
         return {
             'pID':+d.pID,
@@ -349,10 +366,32 @@ const parallelCoordPromise = d3.csv(parallelCoords[0].filename,
             'Home':+d.Home,
             'Leave Home':+d['Leave Home'],
             'Come Back':+d['Come Back'],
-            'joviality':+d.joviality
-
+            'joviality':+d.joviality,
+            'Average Expenses':+d['Average Expenses'],
+            'Average Income':+d['Average Income']
         }
     })
+
+// const parallelCoordPromise2 = d3.csv(parallelCoords[1].filename,
+//     function(d){
+//         return {
+//             'pID':+d.pID,
+//             'Cluster':+d.Cluster,
+//             'Eating':+d.Eating,
+//             'Recreating':+d.Recreating,
+//             'WorkPlace':+d.WorkPlace,
+//             'TravelMinutes':+d.TravelMinutes,
+//             'NumActivities':+d.NumActivities,
+//             'Home':+d.Home,
+//             'Leave Home':+d['Leave Home'],
+//             'Come Back':+d['Come Back'],
+//             'joviality':+d.joviality
+
+//         }
+//     })
+
+
+
     // const dimensions = ['NumActivities','Eating','Recreating','WorkPlace',\
     // 'TravelMinutes','Home','Leave Home','Come Back','joviality']
 promise1.then((result) => processPromise(result,dataArray[0].svgnum))
@@ -365,5 +404,6 @@ promise7.then((result) => processPromise(result,dataArray[6].svgnum))
 promise8.then((result) => processPromise(result,dataArray[7].svgnum))
 promise9.then((result) => processPromise(result,dataArray[8].svgnum))
 
-parallelCoordPromise.then((result) => processParallelPromise(result))
+parallelCoordPromise1.then((result) => processParallelPromise(result,parallelCoords[0].svgnum))
+// parallelCoordPromise2.then((result) => processParallelPromise(result,parallelCoords[1].svgnum))
 
