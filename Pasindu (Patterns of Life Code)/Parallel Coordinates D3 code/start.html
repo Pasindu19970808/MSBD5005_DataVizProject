@@ -1,0 +1,49 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js" integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>HTML 5 Boilerplate</title>
+    <link rel="stylesheet" href="custom.css">
+  </head>
+  <body> 
+  <!-- Have to put type = "module" for getting the import to work.
+  this will still give an error. This is because we are trying to access
+  something in the local file system from modules.js-->
+	<!-- Open the Command Pallete by pressing F1 or ctrl+shift+P and
+   type Live Server: Open With Live Server to start a server or type 
+  Live Server: Stop Live Server to stop a server. -->
+  <h1>Varying TSNE Plots based on Perplexity</h1>
+  <h2>Perplexity Value of 40 gives best results</h2>
+  <svg width=120 height=120 id = 'svg1'>
+  </svg>
+  <svg width=120 height=120 id = 'svg2'>
+  </svg>
+  <svg width=120 height=120 id = 'svg3'>
+  </svg>
+  <svg width=120 height=120 id = 'svg4'>
+  </svg>
+  <svg width=120 height=120 id = 'svg5'>
+  </svg>
+  <svg width=120 height=120 id = 'svg6'>
+  </svg>
+  <svg width=120 height=120 id = 'svg7'>
+  </svg>
+  <svg width=120 height=120 id = 'svg8'>
+  </svg>
+  <svg width=120 height=120 id = 'svg9'>
+  </svg>
+  <h1>Parallel Coordinates for Activity Patterns and Clusters</h1>
+  <svg width=120 height=120 id = 'parallelCoords1'>
+  </svg>
+  <svg width=120 height=120 id = 'parallelCoords2'>
+  </svg>
+
+  <!-- <script src="modules.js" type = "module"></script> -->
+  <script src="patternsoflife.js"></script>
+  </body>
+</html>
